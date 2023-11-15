@@ -1,0 +1,86 @@
+Para apertura se usará el carácter  { y para cierre de sentencia } 
+
+sentCompuesta: { listaDeclaraciones  listaSentencias }
+
+listaDeclaraciones:	 declaración
+ 				    listaDeclaraciones declaración
+
+listaSentencias: 	sentencia
+
+listaSentencias sentencia
+
+sentencia-> sentSeleccion | sentIteracion | sentSalto
+
+sentSelección:	if  ( expresión ) { sentencia}
+                if ( expresión ) { sentencia } else { sentencia } 
+                switch ( expresión ) { sentencia } 
+
+sentIteración: while ( expresión ) { sentencia } 
+                for ( expresión ; expresión ; expresión ) { sentencia }
+
+sentSalto: return expresión
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<programa> -> inicio <listaSentencias> fin
+
+<listaSentencias> -> <sentencia> {<sentencia>}
+
+<sentencia> -> <identificador> : <expresion>|        // VER
+                union(<listaIdentificadores>)|
+                interseccion(<listaIdentificadores>)|
+                complemento(<listaIdentificadores>)|
+                diferencia(<listaIdentificadores>)
+
+<listaIdentificadores> -> <identificador> {, <identificador>}
+
+<listaExpresiones> -> <expresión> {<expresión>}
+
+<expresión> -> <identificador> {<operadorAditivo> <primaria>}
+
+<token> -> uno de <identificador> <palabraReservada>
+ <asignacion> <caracterDePuntuacion>
+
+<identificador> → elem < LETRA o DIGITO o GUION > | set {< LETRA o DIGITO o GUION>}
+
+
+< LETRA o DIGITO o GUION > → uno de <letra> <digito> GUIONES
+
+<letra > → una de a-z A-Z
+
+<digito> → uno de 0-9
+
+<palabraReservada> → if else switch while for return elem set union interseccion complemento diferencia print
+
+<operadores> → TKN_UNION | TKN_COMPLEMENT| TKN_INTERSECTION
+
+<asignacion> → :
+
+<caracterDePuntuacion> → uno de LLAVE_A, LLAVE_C, PARENTESIS_A, PARENTESIS_C
+—-----------
+
+
+typedef enum {
+INICIO, FIN, WHILE, FOR, ID, CONSTANTE, IF,TKN_UNION,TKN_COMPLEMENT,TKN_INTERSECTION, LLAVE_A, LLAVE_C, PARENTESIS_A, PARENTESIS_C, IDENTIFICADOR, DIGITO, LETRA, GUIONES} TOKEN;
+BNF de identificador:
+
+Tokens: set, elem
+
+<LETRA> :: = a|b|c|d|e|f|g|h|i|g|k|l|m|n|o|p|q|r|s|t|u|v|x|w|y|z|A|B|C|D|E|F|G|H|I|J|K|L|M|N|O|P|Q|R|S|T|U|V|X|Y|Z
+
+<DIGITO> :: = 0|1|2|3|4|5|6|7|8|9
+
+<GUION> :: = -|_ 
+
+<identificador> ::= elem < LETRA> | <DIGITO> |  <GUION >  | elem {< LETRA> | < DIGITO> | <GUION> }
