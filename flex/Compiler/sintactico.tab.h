@@ -62,7 +62,7 @@ typedef union YYSTYPE
 {
 
 /* Line 1676 of yacc.c  */
-#line 270 "sintactico.y"
+#line 274 "sintactico.y"
 
     char* var;
     char* cnj;

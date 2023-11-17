@@ -2,8 +2,12 @@
 #include <stdio.h>
 #include <stdlib.h> //se usa con %?
 #include <string.h>
-int yylex(void);
-int yyerror(char* s);
+#include "sintactico.tab.h"
+extern int yylex(void);
+extern FILE* yyin;
+void yyerror (char const *s) {
+   fprintf (stderr, "%s\n", s);
+ }
 int yywrap(){
     return(1);
 }
@@ -281,25 +285,29 @@ char* diferencia(char* A, char* B) {
 
 
 %%
-programa:   sentCompuesta
+
+programa:   sentCompuesta {printf("Encontrado programa");}
 ;
 
-sentCompuesta: TKN_SET TKN_ELEM TKN_ASGN expresion sentCompuesta {guardarID($2)}
-            |  TKN_MOSTRAR TKN_ELEM {printf("Encontrado TKN_UNION: %s \n",encontrarCadena($2));}
+sentCompuesta: TKN_SET TKN_ELEM TKN_ASGN expresion sentCompuesta {printf("encontrado set"); guardarID($2);}
+            |  TKN_MOSTRAR TKN_ELEM {printf("encontrado mostrar"); printf("Encontrado TKN_UNION: %s \n",encontrarCadena($2));}
 ; 
 
-expresion: TKN_CNJ   TKN_UNION TKN_CNJ  {char* a=encontrarCadena($1); char* b=encontrarCadena($3); guardarCadena(unionConjunto(a,b));}
-           |TKN_CNJ TKN_COMPLEMENT TKN_CNJ {char* a=encontrarCadena($1); char* b=encontrarCadena($3);guardarCadena(diferencia(a,b));}
-           |TKN_CNJ TKN_INTERSECTION TKN_CNJ  {char* a=encontrarCadena($1); char* b=encontrarCadena($3);guardarCadena(interseccion(a,b));}
-           |TKN_CNJ {guardarCadena($1); }
+expresion: TKN_CNJ TKN_UNION TKN_CNJ  {printf("Encontrado TKN_UNION"); char* a=encontrarCadena($1); char* b=encontrarCadena($3); guardarCadena(unionConjunto(a,b));}
+           |TKN_CNJ TKN_COMPLEMENT TKN_CNJ {printf("Encontrado TKN_COMPLEMENT"); char* a=encontrarCadena($1); char* b=encontrarCadena($3);guardarCadena(diferencia(a,b));}
+           |TKN_CNJ TKN_INTERSECTION TKN_CNJ  {printf("Encontrado TKN_INTERSECTION"); char* a=encontrarCadena($1); char* b=encontrarCadena($3);guardarCadena(interseccion(a,b));}
+           |TKN_CNJ {printf("Encontrado TKN_CNJ"); guardarCadena($1); }
 ;
 
 %%
 
 int main(int arg,char **argv){
-    FILE* yyin;
+
     if (arg>1)
+    {
         yyin=fopen(argv[1],"rt");
+        printf("Entro al primer arg");
+    }
     else
         yyin=stdin;
         
@@ -312,3 +320,8 @@ int main(int arg,char **argv){
 
 //gcc lex.yy.c sintactico.tab.c -o programa.exe -lfl
 //gcc lex.yy.c -o scanner.exe -lfl  es para compilar el de flex
+//bison -d sintactico.y
+//flex lexico_flex.l
+
+//gcc lex.yy.c -o scanner.exe -lfl -lm    es para compilar el de flex
+//flex lexico_flex.l

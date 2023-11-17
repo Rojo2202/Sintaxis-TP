@@ -73,8 +73,12 @@
 #include <stdio.h>
 #include <stdlib.h> //se usa con %?
 #include <string.h>
-int yylex(void);
-int yyerror(char* s);
+#include "sintactico.tab.h"
+extern int yylex(void);
+extern FILE* yyin;
+void yyerror (char const *s) {
+   fprintf (stderr, "%s\n", s);
+ }
 int yywrap(){
     return(1);
 }
@@ -323,7 +327,7 @@ char* diferencia(char* A, char* B) {
 
 
 /* Line 189 of yacc.c  */
-#line 327 "sintactico.tab.c"
+#line 331 "sintactico.tab.c"
 
 /* Enabling traces.  */
 #ifndef YYDEBUG
@@ -373,7 +377,7 @@ typedef union YYSTYPE
 {
 
 /* Line 214 of yacc.c  */
-#line 270 "sintactico.y"
+#line 274 "sintactico.y"
 
     char* var;
     char* cnj;
@@ -381,7 +385,7 @@ typedef union YYSTYPE
 
 
 /* Line 214 of yacc.c  */
-#line 385 "sintactico.tab.c"
+#line 389 "sintactico.tab.c"
 } YYSTYPE;
 # define YYSTYPE_IS_TRIVIAL 1
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */
@@ -393,7 +397,7 @@ typedef union YYSTYPE
 
 
 /* Line 264 of yacc.c  */
-#line 397 "sintactico.tab.c"
+#line 401 "sintactico.tab.c"
 
 #ifdef short
 # undef short
@@ -678,7 +682,7 @@ static const yytype_int8 yyrhs[] =
 /* YYRLINE[YYN] -- source line where rule number YYN was defined.  */
 static const yytype_uint16 yyrline[] =
 {
-       0,   284,   284,   287,   288,   291,   292,   293,   294
+       0,   288,   288,   291,   292,   295,   296,   297,   298
 };
 #endif
 
@@ -1579,52 +1583,59 @@ yyreduce:
   YY_REDUCE_PRINT (yyn);
   switch (yyn)
     {
-        case 3:
+        case 2:
 
 /* Line 1455 of yacc.c  */
-#line 287 "sintactico.y"
-    {guardarID((yyvsp[(2) - (5)].var));}
+#line 288 "sintactico.y"
+    {printf("Encontrado programa");;}
+    break;
+
+  case 3:
+
+/* Line 1455 of yacc.c  */
+#line 291 "sintactico.y"
+    {printf("encontrado set"); guardarID((yyvsp[(2) - (5)].var));;}
     break;
 
   case 4:
 
 /* Line 1455 of yacc.c  */
-#line 288 "sintactico.y"
-    {printf("Encontrado TKN_UNION: %s \n",encontrarCadena((yyvsp[(2) - (2)].var)));;}
+#line 292 "sintactico.y"
+    {printf("encontrado mostrar"); printf("Encontrado TKN_UNION: %s \n",encontrarCadena((yyvsp[(2) - (2)].var)));;}
     break;
 
   case 5:
 
 /* Line 1455 of yacc.c  */
-#line 291 "sintactico.y"
-    {char* a=encontrarCadena((yyvsp[(1) - (3)].cnj)); char* b=encontrarCadena((yyvsp[(3) - (3)].cnj)); guardarCadena(unionConjunto(a,b));;}
+#line 295 "sintactico.y"
+    {printf("Encontrado TKN_UNION"); char* a=encontrarCadena((yyvsp[(1) - (3)].cnj)); char* b=encontrarCadena((yyvsp[(3) - (3)].cnj)); guardarCadena(unionConjunto(a,b));;}
     break;
 
   case 6:
 
 /* Line 1455 of yacc.c  */
-#line 292 "sintactico.y"
-    {char* a=encontrarCadena((yyvsp[(1) - (3)].cnj)); char* b=encontrarCadena((yyvsp[(3) - (3)].cnj));guardarCadena(diferencia(a,b));;}
+#line 296 "sintactico.y"
+    {printf("Encontrado TKN_COMPLEMENT"); char* a=encontrarCadena((yyvsp[(1) - (3)].cnj)); char* b=encontrarCadena((yyvsp[(3) - (3)].cnj));guardarCadena(diferencia(a,b));;}
     break;
 
   case 7:
 
 /* Line 1455 of yacc.c  */
-#line 293 "sintactico.y"
-    {char* a=encontrarCadena((yyvsp[(1) - (3)].cnj)); char* b=encontrarCadena((yyvsp[(3) - (3)].cnj));guardarCadena(interseccion(a,b));;}
+#line 297 "sintactico.y"
+    {printf("Encontrado TKN_INTERSECTION"); char* a=encontrarCadena((yyvsp[(1) - (3)].cnj)); char* b=encontrarCadena((yyvsp[(3) - (3)].cnj));guardarCadena(interseccion(a,b));;}
     break;
 
   case 8:
 
 /* Line 1455 of yacc.c  */
-#line 294 "sintactico.y"
-    {guardarCadena((yyvsp[(1) - (1)].cnj)); ;}
+#line 298 "sintactico.y"
+    {printf("Encontrado TKN_CNJ"); guardarCadena((yyvsp[(1) - (1)].cnj)); ;}
     break;
 
 
 
 /* Line 1455 of yacc.c  */
-#line 1628 "sintactico.tab.c"
+#line 1639 "sintactico.tab.c"
       default: break;
     }
   YY_SYMBOL_PRINT ("-> $$ =", yyr1[yyn], &yyval, &yyloc);
@@ -1836,13 +1847,16 @@ yyreturn:
 
 
 /* Line 1675 of yacc.c  */
-#line 297 "sintactico.y"
+#line 301 "sintactico.y"
 
 
 int main(int arg,char **argv){
-    FILE* yyin;
+
     if (arg>1)
+    {
         yyin=fopen(argv[1],"rt");
+        printf("Entro al primer arg");
+    }
     else
         yyin=stdin;
         
@@ -1855,3 +1869,8 @@ int main(int arg,char **argv){
 
 //gcc lex.yy.c sintactico.tab.c -o programa.exe -lfl
 //gcc lex.yy.c -o scanner.exe -lfl  es para compilar el de flex
+//bison -d sintactico.y
+//flex lexico_flex.l
+
+//gcc lex.yy.c -o scanner.exe -lfl -lm    es para compilar el de flex
+//flex lexico_flex.l

@@ -6,7 +6,7 @@ int nlines=0;
 
 
 
-/*
+
 TKN_ASGN = “:”
 TKN_ELEM = [a-zA-Z0-9]
 TKN_CNJ = “(“([a-zA-Z0-9])(“,”+[a-zA-Z0-9])*“)” 
@@ -20,7 +20,7 @@ TKN_CAA = “[“
 TKN_CAC = “]”
 TKN_SET = set
 TKN_MOSTRAR = mostrar
-*/  
+
 
 %%
 
@@ -37,7 +37,8 @@ TKN_MOSTRAR = mostrar
 "["     {printf("Encontrado TKN_CAA: %s \n",yytext);}
 "]"     {printf("Encontrado TKN_CAC: %s \n",yytext);}
 ","     {printf("Encontrado SEPARADOR: %s \n",yytext);}
-set     printf("Palabra reservada set \n");
+set     {printf("Palabra reservada set \n");}
+mostrar {printf("Palabra reservada mostrar \n");}
 " "     {}
  
 
@@ -48,14 +49,13 @@ set     printf("Palabra reservada set \n");
 
 
 void main(int argc,char **argv)
-{
-    /*
-if (argc>1)
-yyin=fopen(argv[1],"rt");
-else
-yyin=stdin;
-yylex();
-printf("\nNumero lineas analizadas: %d\n", nlines);*/
+{ 
+    if (argc>1)
+        yyin=fopen(argv[1],"rt");
+    else
+        yyin=stdin;
+    yylex();
+    printf("\nNumero lineas analizadas: %d\n", nlines);
 }
 
 /* para compilar
