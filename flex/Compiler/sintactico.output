@@ -1,0 +1,88 @@
+Nonterminals useless in grammar
+
+   sentCompuesta
+   Expresion
+
+
+Terminals unused in grammar
+
+   TKN_ASGN
+   TKN_ELEM
+   TKN_CNJ
+   TKN_SEP
+   TKN_PAA
+   TKN_PAC
+   TKN_CAA
+   TKN_CAC
+   TKN_SET
+   TKN_UNION
+   TKN_COMPLEMENT
+   TKN_INTERSECTION
+
+
+Rules useless in grammar
+
+    2 programa: sentCompuesta
+
+    3 sentCompuesta: TKN_SET TKN_ELEM TKN_ASGN Expresion sentCompuesta
+
+    4 Expresion: Expresion TKN_UNION Expresion
+    5          | Expresion TKN_COMPLEMENT Expresion
+    6          | Expresion TKN_INTERSECTION Expresion
+    7          | TKN_CNJ
+
+
+Gramática
+
+    0 $accept: programa $end
+
+    1 programa: /* vacío */
+
+
+Terminales con las reglas donde aparecen
+
+$end (0) 0
+error (256)
+TKN_ASGN (258)
+TKN_ELEM (259)
+TKN_CNJ (260)
+TKN_SEP (261)
+TKN_PAA (262)
+TKN_PAC (263)
+TKN_CAA (264)
+TKN_CAC (265)
+TKN_SET (266)
+TKN_UNION (267)
+TKN_COMPLEMENT (268)
+TKN_INTERSECTION (269)
+
+
+No terminales con las reglas donde aparecen
+
+$accept (15)
+    en la izquierda: 0
+programa (16)
+    en la izquierda: 1, en la derecha: 0
+
+
+estado 0
+
+    0 $accept: . programa $end
+
+    $default  reduce usando la regla 1 (programa)
+
+    programa  ir al estado 1
+
+
+estado 1
+
+    0 $accept: programa . $end
+
+    $end  desplazar e ir al estado 2
+
+
+estado 2
+
+    0 $accept: programa $end .
+
+    $default  aceptar
