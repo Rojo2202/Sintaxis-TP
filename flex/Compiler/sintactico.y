@@ -2,10 +2,11 @@
 #include <stdio.h>
 #include <stdlib.h> //se usa con %?
 #include <string.h>
-#include "parser.tab.h"	
-int yylex();
-
-
+int yylex(void);
+int yyerror(char* s);
+int yywrap(){
+    return(1);
+}
 
 char* guardadas [2][28];
 void inicializarMatriz (){
@@ -69,16 +70,16 @@ void eliminarRepetidos(char* cadena) {
     size_t indiceDestino = 1;
 
     for (size_t indiceActual = 1; indiceActual < longitud; ++indiceActual) {
-        bool esRepetido = false;
+        int esRepetido = 0;
 
         for (size_t indiceAnterior = 0; indiceAnterior < indiceDestino; ++indiceAnterior) {
             if (cadena[indiceActual] == cadena[indiceAnterior]) {
-                esRepetido = true;
+                esRepetido = 1;
                 break;
             }
         }
 
-        if (!esRepetido) {
+        if (esRepetido == 0) {
             cadena[indiceDestino] = cadena[indiceActual];
             ++indiceDestino;
         }
@@ -112,7 +113,6 @@ void agregarSeparador(char* cadena) {
 }
 
 
-
 char* unionConjunto (char* A, char* B) {
     // Hacer copias temporales de A y B
     char* copiaA = strdup(A);
@@ -124,15 +124,14 @@ char* unionConjunto (char* A, char* B) {
 
     // Concatenar la coma y copiaB al final de copiaA
     size_t longitudB = strlen(copiaB);
-    char* resultado = new char[longitudA + 1 + longitudB]; // 1 para la coma
+    char* resultado = malloc(longitudA + 1 + longitudB); // 1 para la coma
     strcpy(resultado, copiaA);
     strcat(resultado, ",");
     eliminarCaracterEnPosicion(copiaB,0);
     strcat(resultado, copiaB);
 
-    // Liberar memoria de las copias temporales
-    delete[] copiaA;
-    delete[] copiaB;
+    free(copiaA);
+    free(copiaB);
 
     return resultado;
 }
@@ -168,12 +167,12 @@ char* interseccion(char* A,char* B) {
             }
         }
     }
-    eliminarRepetidos(nueva_cadena);
+   eliminarRepetidos(nueva_cadena);
    agregarSeparador(nueva_cadena);
 
-    delete[] copiaA;
-    delete[] copiaB;
-
+    free(copiaA);
+    free(copiaB);
+    
     return nueva_cadena;
 }
 
@@ -195,7 +194,7 @@ void eliminar_caracteres(char cadena1[], const char cadena2[]) {
         }
 
         // Si el carácter no está en cadena2, conservarlo
-        if (!encontrado) {
+        if (encontrado == 0) {
             cadena1[k++] = cadena1[i];
         }
     }
@@ -223,20 +222,20 @@ char* diferencia(char* A, char* B) {
     int largodiferencia = 0;
     int longitudA = strlen(copiaA);
     int longitudInterseccion = strlen(copiaInterseccion);
-    char* nueva_cadena = new char [longitudA - longitudInterseccion];
-    bool estaEnInterseccion;
+    char* nueva_cadena = malloc(longitudA - longitudInterseccion);
+    int estaEnInterseccion = 1;
 
     for(int i=0; i<longitudA;i++){
-        estaEnInterseccion = false;
+        estaEnInterseccion = 0;
         for(int j=0; j<longitudInterseccion; j++){
             if(copiaA[i] == copiaInterseccion[j]){
-                estaEnInterseccion = true;
+                estaEnInterseccion = 1;
                 if(copiaA[i] == ','){
                     break;
                 }
             }
         }
-        if(!estaEnInterseccion){
+        if(estaEnInterseccion == 0){
             nueva_cadena[largodiferencia++] = copiaA[i];
             //std::cout << "Se agrego el caracter: " << copiaA[i] << std::endl;
         }
@@ -245,13 +244,14 @@ char* diferencia(char* A, char* B) {
     eliminarRepetidos(nueva_cadena);
     agregarSeparador(nueva_cadena);
 
-    delete[] copiaInterseccion;
-    delete[] copiaA;
-
+    free(copiaA);
+    free(copiaInterseccion);
+    
     return nueva_cadena;
 }
-
 %}
+
+
 
 %token TKN_ASGN 
 %token TKN_ELEM 
@@ -262,55 +262,53 @@ char* diferencia(char* A, char* B) {
 %token TKN_CAA 
 %token TKN_CAC 
 %token TKN_SET 
+%token TKN_MOSTRAR 
+
+
+%type <var> TKN_ELEM
+%type <cnj> TKN_CNJ
+%union{
+    char* var;
+    char* cnj;
+}
+
+
 %left TKN_UNION 
 %left TKN_COMPLEMENT 
 %left TKN_INTERSECTION 
+
 %start programa
 
 
 %%
-programa:           
-            |sentCompuesta
+programa:   sentCompuesta
 ;
 
-sentCompuesta: TKN_SET TKN_ELEM TKN_ASGN Expresion sentCompuesta {guardarID($2);guardarCadena($4);}
-;
+sentCompuesta: TKN_SET TKN_ELEM TKN_ASGN expresion sentCompuesta {guardarID($2)}
+            |  TKN_MOSTRAR TKN_ELEM {printf("Encontrado TKN_UNION: %s \n",encontrarCadena($2));}
+; 
 
-Expresion: Expresion TKN_UNION Expresion  {char* a=encontrarCadena($1); char* b=encontrarCadena($3);char*=$3; $$=union(a,b);}
-           |Expresion TKN_COMPLEMENT Expresion {char* a=encontrarCadena($1); char* b=encontrarCadena($3);char*=$3;$$=diferencia(a,b);}
-           |Expresion TKN_INTERSECTION Expresion  {char* a=encontrarCadena($1); char* b=encontrarCadena($3);char*=$3;$$=interseccion(a,b);}
-           |TKN_CNJ { printf("TKN_CNJ:" \s%\"\n",$1); }
-
+expresion: TKN_CNJ   TKN_UNION TKN_CNJ  {char* a=encontrarCadena($1); char* b=encontrarCadena($3); guardarCadena(unionConjunto(a,b));}
+           |TKN_CNJ TKN_COMPLEMENT TKN_CNJ {char* a=encontrarCadena($1); char* b=encontrarCadena($3);guardarCadena(diferencia(a,b));}
+           |TKN_CNJ TKN_INTERSECTION TKN_CNJ  {char* a=encontrarCadena($1); char* b=encontrarCadena($3);guardarCadena(interseccion(a,b));}
+           |TKN_CNJ {guardarCadena($1); }
 ;
 
 %%
 
 int main(int arg,char **argv){
     FILE* yyin;
-    if (argc>1)
+    if (arg>1)
         yyin=fopen(argv[1],"rt");
     else
         yyin=stdin;
         
     yyparse();
     fclose(yyin);
-
+ 
     return 0;
 }
 
 
-/*
-void main(int argc,char **argv)
-
-if (argc>1)
-yyin=fopen(argv[1],"rt");
-else
-yyin=stdin;
-
-yylex();
-
-printf("\nNumero lineas analizadas: %d\n", nlines);
-
-*/
-
-
+//gcc lex.yy.c sintactico.tab.c -o programa.exe -lfl
+//gcc lex.yy.c -o scanner.exe -lfl  es para compilar el de flex

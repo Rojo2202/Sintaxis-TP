@@ -5,7 +5,7 @@
 // ***** FUNCION PARA LA UNION *****
 
 // **** ADICIONALES ****
-void eliminarCaracterEnPosicion(char* cadena, int posicion) {
+void eliminarCaracterEnPosicion(char cadena[], int posicion) {
     int len = strlen(cadena);
 
     if (posicion >= 0 && posicion < len) {
@@ -20,7 +20,7 @@ void eliminarCaracterEnPosicion(char* cadena, int posicion) {
 }
 
 
-void eliminarRepetidos(char* cadena) {
+void eliminarRepetidos(char cadena[]) {
     size_t longitud = strlen(cadena);
 
     if (longitud <= 1) {
@@ -53,7 +53,7 @@ void eliminarRepetidos(char* cadena) {
 
 
 
-void agregarSeparador(char* cadena) {
+void agregarSeparador(char cadena[]) {
     char nuevaCadena[100];  // Cambiado de char* a char
     int longitud = strlen(cadena);
 
@@ -75,27 +75,26 @@ void agregarSeparador(char* cadena) {
 
 
 
-char* unionConjunto (char* A, char* B) {
+String unionConjunto (char A[] , char B[] ) {
     // Hacer copias temporales de A y B
-    char* copiaA = strdup(A);
-    char* copiaB = strdup(B);
+    char copiaA[strlen(A)];
+    char copiaB[strlen(B)];
+    strcpy(copiaA,A);
+    strcpy(copiaB,B);
 
-    // Eliminar el último carácter de copiaA
-    size_t longitudA = strlen(copiaA);
-    eliminarCaracterEnPosicion(copiaA, longitudA - 1);
+    char resultado [strlen(B) + 1 + strlen(A)]; 
 
-    // Concatenar la coma y copiaB al final de copiaA
-    size_t longitudB = strlen(copiaB);
-    char* resultado = new char[longitudA + 1 + longitudB]; // 1 para la coma
     strcpy(resultado, copiaA);
     strcat(resultado, ",");
-    eliminarCaracterEnPosicion(copiaB,0);
     strcat(resultado, copiaB);
 
     // Liberar memoria de las copias temporales
     delete[] copiaA;
     delete[] copiaB;
+    eliminarRepetidos(resultado);
+    agregarSeparador(resultado);
 
+    
     return resultado;
 }
 

@@ -31,11 +31,11 @@ void guardarCadena(char* cadena) {
     }
 }
 
-char* encontrarCadena(char id) {
+char* encontrarCadena(char* id) {
 
     for (int columna = 0; columna < 29; columna++) {
         if (guardadas[0][columna] == id) {
-            return *guardadas[1][columna];
+            return guardadas[1][columna];
         }
     }
 }
@@ -47,9 +47,9 @@ char* encontrarCadena(char id) {
 
 void main()
 {
-char* a =hola;
-char* b =que;
-char* c =tal;
+char* a ="hola";
+char* b ="que";
+char* c ="tal";
 char* d =(a,b,c,d);
 guardarID(a);
 guardarCadena(a);

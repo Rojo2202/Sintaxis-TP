@@ -19,6 +19,7 @@ TKN_PAC = “)“
 TKN_CAA = “[“
 TKN_CAC = “]”
 TKN_SET = set
+TKN_MOSTRAR = mostrar
 */  
 
 %%
@@ -38,6 +39,7 @@ TKN_SET = set
 ","     {printf("Encontrado SEPARADOR: %s \n",yytext);}
 set     printf("Palabra reservada set \n");
 " "     {}
+ 
 
 "\n"    {nlines++;}
 .       {printf("Caracter erroneo: %s \n",yytext);}

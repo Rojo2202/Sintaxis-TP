@@ -20,6 +20,7 @@ TKN_CAA = “[“
 TKN_CAC = “]”
 TKN_DEF = elem
 TKN_SET = set
+TKN_MOSTRAR = mostrar
 */  
 
 %%
@@ -37,6 +38,7 @@ TKN_SET = set
 "]"     {return(TKN_CAC);}
 ","     {return(TKN_SEP);}
 set     {return(TKN_SET);}
+mostrar {return(TKN_MOSTRAR);}
 " "     {}
 "\n"    {nlines++;}
 [ \t]       {/* No hacer nada en caso de espacios y tabulaciones */}
