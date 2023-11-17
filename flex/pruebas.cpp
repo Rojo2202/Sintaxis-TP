@@ -1,44 +1,10 @@
-#include <stdio.h>
-#include <stdlib.h> //se usa con %?
+#include <iostream>
+#include <stdlib.h>
 #include <string.h>
-#include "parser.tab.h"	
-int yylex();
 
+// ***** FUNCION PARA LA UNION *****
 
-
-char* guardadas [2][28];
-
-
-%token TKN_ASGN //“:”
-%token TKN_ELEM //[a-zA-Z0-9]
-%token TKN_CNJ // “(“([a-zA-Z0-9])(“,”+[a-zA-Z0-9])*“)”         //se usa +?
-%token TKN_SEP // "," 
-%token TKN_UNION //“+”
-%token TKN_COMPLEMENT //“-”
-%token TKN_INTERSECTION // “*”
-%token TKN_PAA //“(“
-%token TKN_PAC //“)“
-%token TKN_CAA //“[“
-%token TKN_CAC //“]”
-%token TKN_SET //set
-
-
-
-%%
-programa:
-            |programa sentCompuesta
-;
-
-sentCompuesta: TKN_SET TKN_ELEM TKN_ASGN Expresion {guardarID($2);guardarCadena($4);}
-;
-
-Expresion: Expresion TKN_UNION Expresion  {char* 1=encontrarCadena($1); char* 3=encontrarCadena($3);char*=$3; $$=union($1,$3);}
-           |Expresion TKN_COMPLEMENT Expresion {char* 1=encontrarCadena($1); char* 3=encontrarCadena($3);char*=$3;$$=diferencia($1,$3);}
-           |Expresion TKN_INTERSECTION Expresion  {char* 1=encontrarCadena($1); char* 3=encontrarCadena($3);char*=$3;$$=interseccion($1,$3);}
-           |TKN_CNJ 
-;
-
-
+// **** ADICIONALES ****
 void eliminarCaracterEnPosicion(char* cadena, int posicion) {
     int len = strlen(cadena);
 
@@ -242,4 +208,28 @@ char* diferencia(char* A, char* B) {
     agregarSeparador(nueva_cadena);
 
     return nueva_cadena;
+}
+
+
+int main() {
+    char conjuntoA[] = "(a,b,c,d,e)";
+    char conjuntoB[] = "(c,d,e,f,g)";
+    //diferencia: a,b,f,g
+    std::cout << "Conjunto A: " << conjuntoA << std::endl;
+    std::cout << "Conjunto B: " << conjuntoB << std::endl;
+
+    // Prueba de la función de unión
+    char* resultadoUnion = unionConjunto(conjuntoA, conjuntoB);
+    std::cout << "Union: " << resultadoUnion << std::endl;
+
+    // Prueba de la función de intersección
+    char* resultadoInterseccion = interseccion(conjuntoA, conjuntoB);
+    std::cout << "Interseccion: " << resultadoInterseccion << std::endl;
+
+    // Prueba de la función de diferencia
+
+    char* resultadoDiferencia = diferencia(conjuntoA, conjuntoB);
+    std::cout << "Diferencia: " << resultadoDiferencia << std::endl;
+
+    return 0;
 }
