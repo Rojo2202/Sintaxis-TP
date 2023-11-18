@@ -6,46 +6,65 @@ int nlines=0;
 %}
 
 
-/*
-TKN_ASGN = “:”
-TKN_ELEM = [a-zA-Z0-9]
-TKN_CNJ = “(“+([a-zA-Z0-9])+(“,”+[a-zA-Z0-9])*+“)”      //se usa + para concatenar parentesis y caracteres (creo q es para clausura positiva)?
-TKN_SEP = "," 
-TKN_UNION = “+”
-TKN_COMPLEMENT = “-”
-TKN_INTERSECTION = “*”
-TKN_PAA = “(“
-TKN_PAC = “)“
-TKN_CAA = “[“
-TKN_CAC = “]”
-TKN_DEF = elem
-TKN_SET = set
-TKN_MOSTRAR = mostrar
-*/  
+TKN_ASGN [:]
+TKN_ELEM [a-zA-Z0-9] 
+TKN_SEP [,]
+TKN_PAA [(]
+TKN_PAC [)]
+TKN_UNION [+]
+TKN_DIFERENCIA [-]
+TKN_INTERSECTION [*]
+TKN_SET [set]
+TKN_MOSTRAR [mostrar]
+TKN_CNJ {TKN_PAA}{TKN_ELEM}({TKN_SEP}{TKN_ELEM})*{TKN_PAC}
 
 %%
 
 
-[a-zA-Z0-9] {return(TKN_ELEM);}
-"“(“+([a-zA-Z0-9]) + (“,”+[a-zA-Z0-9])*+“)”" {return(TKN_CNJ);}
-":"     {return(TKN_ASGN);}
-"*"     {return(TKN_INTERSECTION);}
-"+"     {return(TKN_UNION);}
-"-"     {return(TKN_COMPLEMENT);}
-"("     {return(TKN_PAA);}
-")"     {return(TKN_PAC);}
-"["     {return(TKN_CAA);}
-"]"     {return(TKN_CAC);}
-","     {return(TKN_SEP);}
-set     {return(TKN_SET);}
-mostrar {return(TKN_MOSTRAR);}
-" "     {}
-"\n"    {nlines++;}
+{TKN_ELEM} {yylval.cadena = strdup(yytext);return TKN_ELEM;}
+{TKN_CNJ}  {yylval.cadena = strdup(yytext);return TKN_CNJ;}
+":"        {return TKN_ASGN;}
+"*"        {return TKN_INTERSECTION;}
+"+"        {return TKN_UNION;}
+"-"        {return TKN_DIFERENCIA;}
+"("        {}
+")"        {}
+","        {}
+set        {return TKN_SET;}
+mostrar    {return TKN_MOSTRAR;}
+" "        {}
+"\n"       {nlines++;}
 [ \t]       {/* No hacer nada en caso de espacios y tabulaciones */}
 
 .       {printf("Caracter erroneo: %s \n",yytext);}
 
 %%
+
+/*
+
+{TKN_ELEM} {printf("Encontrado TKN_ELEM: %s\n",yytext);}
+{TKN_CNJ} {printf("Encontrado TKN_CNJ: %s\n",yytext);} 
+
+":"     {printf("Encontrado TKN_ASGN: %s \n",yytext);}
+"*"     {printf("Encontrado TKN_INTERSECTION: %s\n",yytext);}
+"+"     {printf("Encontrado TKN_UNION: %s \n",yytext);}
+"-"     {printf("Encontrado TKN_COMPLEMENT: %s \n",yytext);}
+"("     {printf("Encontrado TKN_PAA: %s \n",yytext);}
+")"     {printf("Encontrado TKN_PAC: %s \n",yytext);}
+"["     {printf("Encontrado TKN_CAA: %s \n",yytext);}
+"]"     {printf("Encontrado TKN_CAC: %s \n",yytext);}
+","     {printf("Encontrado SEPARADOR: %s \n",yytext);}
+set     {printf("Palabra reservada set \n");}
+mostrar {printf("Palabra reservada mostrar \n");}
+" "     {}
+"\n"    {nlines++;}
+.       {printf("Caracter erroneo: %s \n",yytext);}
+
+*/
+
+
+
+
 
 /*
 void main(int argc,char **argv)

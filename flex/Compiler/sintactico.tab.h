@@ -45,13 +45,11 @@
      TKN_SEP = 261,
      TKN_PAA = 262,
      TKN_PAC = 263,
-     TKN_CAA = 264,
-     TKN_CAC = 265,
-     TKN_SET = 266,
-     TKN_MOSTRAR = 267,
-     TKN_UNION = 268,
-     TKN_COMPLEMENT = 269,
-     TKN_INTERSECTION = 270
+     TKN_SET = 264,
+     TKN_MOSTRAR = 265,
+     TKN_UNION = 266,
+     TKN_DIFERENCIA = 267,
+     TKN_INTERSECTION = 268
    };
 #endif
 
@@ -62,15 +60,14 @@ typedef union YYSTYPE
 {
 
 /* Line 1676 of yacc.c  */
-#line 274 "sintactico.y"
+#line 290 "sintactico.y"
 
-    char* var;
-    char* cnj;
+    char* cadena;
 
 
 
 /* Line 1676 of yacc.c  */
-#line 74 "sintactico.tab.h"
+#line 71 "sintactico.tab.h"
 } YYSTYPE;
 # define YYSTYPE_IS_TRIVIAL 1
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */

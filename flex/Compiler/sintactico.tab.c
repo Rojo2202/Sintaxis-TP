@@ -76,9 +76,11 @@
 #include "sintactico.tab.h"
 extern int yylex(void);
 extern FILE* yyin;
-void yyerror (char const *s) {
-   fprintf (stderr, "%s\n", s);
- }
+
+void yyerror (char *s) {
+    printf("Se detecto un error");                                 
+}
+
 int yywrap(){
     return(1);
 }
@@ -93,11 +95,10 @@ void inicializarMatriz (){
 }
 
 void guardarID (char* id) {
-
     for (int columna = 0; columna < 29; columna++) {
         if (guardadas[0][columna] == 0 ) {
             guardadas[0][columna] = id;
-                    return;
+            break;
         }
     }
 }
@@ -106,7 +107,8 @@ void guardarCadena(char* cadena) {
     for(int columna = 0; columna < 29; columna ++) {
         if(guardadas[1][columna] == 0) {
             guardadas[1][columna] = cadena;
-                    return;
+            printf("cadena guardada: %s", cadena);
+            break;
         }
     }
 }
@@ -115,6 +117,7 @@ char* encontrarCadena(char* id) {
 
     for (int columna = 0; columna < 29; columna++) {
         if (guardadas[0][columna] == id) {
+            printf("cjt: %s",guardadas[1][columna]);
             return guardadas[1][columna];
         }
     }
@@ -126,6 +129,7 @@ void eliminarCaracterEnPosicion(char* cadena, int posicion) {
         // Mover los caracteres a la izquierda para sobrescribir el carácter en la posición especificada
         for (int i = posicion; i < len - 1; i++) {
             cadena[i] = cadena[i + 1];
+            //printf("estoy en car: %d", i);
         }
 
         // Establecer el último carácter como nulo
@@ -188,10 +192,12 @@ void agregarSeparador(char* cadena) {
 }
 
 
-char* unionConjunto (char* A, char* B) {
+void unionConjunto (char* A, char* B) {
     // Hacer copias temporales de A y B
     char* copiaA = strdup(A);
     char* copiaB = strdup(B);
+    printf("A: %s \n",A);
+    printf("B: %s \n",B);
 
     // Eliminar el último carácter de copiaA
     size_t longitudA = strlen(copiaA);
@@ -207,18 +213,20 @@ char* unionConjunto (char* A, char* B) {
 
     free(copiaA);
     free(copiaB);
-
-    return resultado;
+   // resultado[longitudA + 1 + longitudB] = '\0';
+    printf("El resultado de la union es: %s \n", resultado);
+    free(resultado);
 }
 
 
 
 // ***** FUNCION PARA LA INTERSECCION *****
 
-char* interseccion(char* A,char* B) {
+void interseccion(char* A,char* B) {
     char* copiaA = strdup(A);
     char* copiaB = strdup(B);
-
+    printf("A: %s \n",A);
+    printf("B: %s \n",B);
 
     eliminarCaracterEnPosicion(copiaA,0);
     eliminarCaracterEnPosicion(copiaA,strlen(copiaA)-1);
@@ -247,8 +255,11 @@ char* interseccion(char* A,char* B) {
 
     free(copiaA);
     free(copiaB);
-    
-    return nueva_cadena;
+    free(A);
+    free(B);
+    printf("El resultado de la interseccion es: %s \n",nueva_cadena);
+    nueva_cadena[contador] = '\0';
+    free(nueva_cadena);
 }
 
 
@@ -280,15 +291,19 @@ void eliminar_caracteres(char cadena1[], const char cadena2[]) {
 
 
 // ***** FUNCION PARA LA DIFERENCIA *****
-char* diferencia(char* A, char* B) {
-    char* copiaInterseccion = strdup(interseccion(A,B));
+void diferencia(char* A, char* B) {
+    char* copiaInterseccion = strdup(B);
     char* copiaA = strdup(A);//(a,b,c)
+    printf("A: %s \n",copiaA);
+    printf("B: %s \n",copiaInterseccion);
 
     eliminarCaracterEnPosicion(copiaA,0);
     eliminarCaracterEnPosicion(copiaA,strlen(copiaA)-1);
-
+    //printf("A: %s \n",copiaA);
+    
     eliminarCaracterEnPosicion(copiaInterseccion,0);
     eliminarCaracterEnPosicion(copiaInterseccion,strlen(copiaInterseccion)-1);
+  //  printf("B: %s \n",copiaInterseccion);
 
    // std::cout << "Conjunto A: " << copiaA << std::endl;
 
@@ -321,13 +336,15 @@ char* diferencia(char* A, char* B) {
 
     free(copiaA);
     free(copiaInterseccion);
-    
-    return nueva_cadena;
+
+    printf("El resultado de la diferencia es: %s \n",nueva_cadena);
+    free(nueva_cadena);
+    //return nueva_cadena;
 }
 
 
 /* Line 189 of yacc.c  */
-#line 331 "sintactico.tab.c"
+#line 348 "sintactico.tab.c"
 
 /* Enabling traces.  */
 #ifndef YYDEBUG
@@ -360,13 +377,11 @@ char* diferencia(char* A, char* B) {
      TKN_SEP = 261,
      TKN_PAA = 262,
      TKN_PAC = 263,
-     TKN_CAA = 264,
-     TKN_CAC = 265,
-     TKN_SET = 266,
-     TKN_MOSTRAR = 267,
-     TKN_UNION = 268,
-     TKN_COMPLEMENT = 269,
-     TKN_INTERSECTION = 270
+     TKN_SET = 264,
+     TKN_MOSTRAR = 265,
+     TKN_UNION = 266,
+     TKN_DIFERENCIA = 267,
+     TKN_INTERSECTION = 268
    };
 #endif
 
@@ -377,15 +392,14 @@ typedef union YYSTYPE
 {
 
 /* Line 214 of yacc.c  */
-#line 274 "sintactico.y"
+#line 290 "sintactico.y"
 
-    char* var;
-    char* cnj;
+    char* cadena;
 
 
 
 /* Line 214 of yacc.c  */
-#line 389 "sintactico.tab.c"
+#line 403 "sintactico.tab.c"
 } YYSTYPE;
 # define YYSTYPE_IS_TRIVIAL 1
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */
@@ -397,7 +411,7 @@ typedef union YYSTYPE
 
 
 /* Line 264 of yacc.c  */
-#line 401 "sintactico.tab.c"
+#line 415 "sintactico.tab.c"
 
 #ifdef short
 # undef short
@@ -610,22 +624,22 @@ union yyalloc
 #endif
 
 /* YYFINAL -- State number of the termination state.  */
-#define YYFINAL  7
+#define YYFINAL  5
 /* YYLAST -- Last index in YYTABLE.  */
-#define YYLAST   14
+#define YYLAST   9
 
 /* YYNTOKENS -- Number of terminals.  */
-#define YYNTOKENS  16
+#define YYNTOKENS  14
 /* YYNNTS -- Number of nonterminals.  */
-#define YYNNTS  4
+#define YYNNTS  3
 /* YYNRULES -- Number of rules.  */
-#define YYNRULES  8
+#define YYNRULES  7
 /* YYNRULES -- Number of states.  */
-#define YYNSTATES  18
+#define YYNSTATES  13
 
 /* YYTRANSLATE(YYLEX) -- Bison symbol number corresponding to YYLEX.  */
 #define YYUNDEFTOK  2
-#define YYMAXUTOK   270
+#define YYMAXUTOK   268
 
 #define YYTRANSLATE(YYX)						\
   ((unsigned int) (YYX) <= YYMAXUTOK ? yytranslate[YYX] : YYUNDEFTOK)
@@ -659,8 +673,7 @@ static const yytype_uint8 yytranslate[] =
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     1,     2,     3,     4,
-       5,     6,     7,     8,     9,    10,    11,    12,    13,    14,
-      15
+       5,     6,     7,     8,     9,    10,    11,    12,    13
 };
 
 #if YYDEBUG
@@ -668,21 +681,21 @@ static const yytype_uint8 yytranslate[] =
    YYRHS.  */
 static const yytype_uint8 yyprhs[] =
 {
-       0,     0,     3,     5,    11,    14,    18,    22,    26
+       0,     0,     3,     4,     7,    12,    17,    22
 };
 
 /* YYRHS -- A `-1'-separated list of the rules' RHS.  */
 static const yytype_int8 yyrhs[] =
 {
-      17,     0,    -1,    18,    -1,    11,     4,     3,    19,    18,
-      -1,    12,     4,    -1,     5,    13,     5,    -1,     5,    14,
-       5,    -1,     5,    15,     5,    -1,     5,    -1
+      15,     0,    -1,    -1,    16,    15,    -1,     9,     5,    11,
+       5,    -1,     9,     5,    12,     5,    -1,     9,     5,    13,
+       5,    -1,     9,     5,    -1
 };
 
 /* YYRLINE[YYN] -- source line where rule number YYN was defined.  */
 static const yytype_uint16 yyrline[] =
 {
-       0,   288,   288,   291,   292,   295,   296,   297,   298
+       0,   302,   302,   302,   305,   306,   307,   308
 };
 #endif
 
@@ -692,9 +705,8 @@ static const yytype_uint16 yyrline[] =
 static const char *const yytname[] =
 {
   "$end", "error", "$undefined", "TKN_ASGN", "TKN_ELEM", "TKN_CNJ",
-  "TKN_SEP", "TKN_PAA", "TKN_PAC", "TKN_CAA", "TKN_CAC", "TKN_SET",
-  "TKN_MOSTRAR", "TKN_UNION", "TKN_COMPLEMENT", "TKN_INTERSECTION",
-  "$accept", "programa", "sentCompuesta", "expresion", 0
+  "TKN_SEP", "TKN_PAA", "TKN_PAC", "TKN_SET", "TKN_MOSTRAR", "TKN_UNION",
+  "TKN_DIFERENCIA", "TKN_INTERSECTION", "$accept", "programa", "expresion", 0
 };
 #endif
 
@@ -704,20 +716,20 @@ static const char *const yytname[] =
 static const yytype_uint16 yytoknum[] =
 {
        0,   256,   257,   258,   259,   260,   261,   262,   263,   264,
-     265,   266,   267,   268,   269,   270
+     265,   266,   267,   268
 };
 # endif
 
 /* YYR1[YYN] -- Symbol number of symbol that rule YYN derives.  */
 static const yytype_uint8 yyr1[] =
 {
-       0,    16,    17,    18,    18,    19,    19,    19,    19
+       0,    14,    15,    15,    16,    16,    16,    16
 };
 
 /* YYR2[YYN] -- Number of symbols composing right hand side of rule YYN.  */
 static const yytype_uint8 yyr2[] =
 {
-       0,     2,     1,     5,     2,     3,     3,     3,     1
+       0,     2,     0,     2,     4,     4,     4,     2
 };
 
 /* YYDEFACT[STATE-NAME] -- Default rule to reduce with in state
@@ -725,29 +737,29 @@ static const yytype_uint8 yyr2[] =
    means the default is an error.  */
 static const yytype_uint8 yydefact[] =
 {
-       0,     0,     0,     0,     2,     0,     4,     1,     0,     8,
-       0,     0,     0,     0,     3,     5,     6,     7
+       2,     0,     0,     2,     7,     1,     3,     0,     0,     0,
+       4,     5,     6
 };
 
 /* YYDEFGOTO[NTERM-NUM].  */
 static const yytype_int8 yydefgoto[] =
 {
-      -1,     3,     4,    10
+      -1,     2,     3
 };
 
 /* YYPACT[STATE-NUM] -- Index in YYTABLE of the portion describing
    STATE-NUM.  */
-#define YYPACT_NINF -14
+#define YYPACT_NINF -12
 static const yytype_int8 yypact[] =
 {
-      -8,     1,     2,     7,   -14,     5,   -14,   -14,     4,   -13,
-      -8,     6,     8,     9,   -14,   -14,   -14,   -14
+      -6,    -1,     5,    -6,   -11,   -12,   -12,     1,     2,     3,
+     -12,   -12,   -12
 };
 
 /* YYPGOTO[NTERM-NUM].  */
 static const yytype_int8 yypgoto[] =
 {
-     -14,   -14,     0,   -14
+     -12,     6,   -12
 };
 
 /* YYTABLE[YYPACT[STATE-NUM]].  What to do in state STATE-NUM.  If
@@ -757,22 +769,20 @@ static const yytype_int8 yypgoto[] =
 #define YYTABLE_NINF -1
 static const yytype_uint8 yytable[] =
 {
-      11,    12,    13,     1,     2,     5,     6,     7,     8,     9,
-      14,    15,     0,    16,    17
+       7,     8,     9,     1,     4,     5,    10,    11,    12,     6
 };
 
-static const yytype_int8 yycheck[] =
+static const yytype_uint8 yycheck[] =
 {
-      13,    14,    15,    11,    12,     4,     4,     0,     3,     5,
-      10,     5,    -1,     5,     5
+      11,    12,    13,     9,     5,     0,     5,     5,     5,     3
 };
 
 /* YYSTOS[STATE-NUM] -- The (internal number of the) accessing
    symbol of state STATE-NUM.  */
 static const yytype_uint8 yystos[] =
 {
-       0,    11,    12,    17,    18,     4,     4,     0,     3,     5,
-      19,    13,    14,    15,    18,     5,     5,     5
+       0,     9,    15,    16,     5,     0,    15,    11,    12,    13,
+       5,     5,     5
 };
 
 #define yyerrok		(yyerrstatus = 0)
@@ -1583,59 +1593,45 @@ yyreduce:
   YY_REDUCE_PRINT (yyn);
   switch (yyn)
     {
-        case 2:
+        case 3:
 
 /* Line 1455 of yacc.c  */
-#line 288 "sintactico.y"
-    {printf("Encontrado programa");;}
-    break;
-
-  case 3:
-
-/* Line 1455 of yacc.c  */
-#line 291 "sintactico.y"
-    {printf("encontrado set"); guardarID((yyvsp[(2) - (5)].var));;}
+#line 302 "sintactico.y"
+    {printf("Encontrado programa \n");;}
     break;
 
   case 4:
 
 /* Line 1455 of yacc.c  */
-#line 292 "sintactico.y"
-    {printf("encontrado mostrar"); printf("Encontrado TKN_UNION: %s \n",encontrarCadena((yyvsp[(2) - (2)].var)));;}
+#line 305 "sintactico.y"
+    {printf("Encontrado TKN_UNION \n"); unionConjunto((yyvsp[(2) - (4)].cadena),(yyvsp[(4) - (4)].cadena));;}
     break;
 
   case 5:
 
 /* Line 1455 of yacc.c  */
-#line 295 "sintactico.y"
-    {printf("Encontrado TKN_UNION"); char* a=encontrarCadena((yyvsp[(1) - (3)].cnj)); char* b=encontrarCadena((yyvsp[(3) - (3)].cnj)); guardarCadena(unionConjunto(a,b));;}
+#line 306 "sintactico.y"
+    {printf("Encontrado TKN_DIFERENCIA \n"); diferencia((yyvsp[(2) - (4)].cadena),(yyvsp[(4) - (4)].cadena));;}
     break;
 
   case 6:
 
 /* Line 1455 of yacc.c  */
-#line 296 "sintactico.y"
-    {printf("Encontrado TKN_COMPLEMENT"); char* a=encontrarCadena((yyvsp[(1) - (3)].cnj)); char* b=encontrarCadena((yyvsp[(3) - (3)].cnj));guardarCadena(diferencia(a,b));;}
+#line 307 "sintactico.y"
+    {printf("Encontrado TKN_INTERSECTION \n"); interseccion((yyvsp[(2) - (4)].cadena),(yyvsp[(4) - (4)].cadena));;}
     break;
 
   case 7:
 
 /* Line 1455 of yacc.c  */
-#line 297 "sintactico.y"
-    {printf("Encontrado TKN_INTERSECTION"); char* a=encontrarCadena((yyvsp[(1) - (3)].cnj)); char* b=encontrarCadena((yyvsp[(3) - (3)].cnj));guardarCadena(interseccion(a,b));;}
-    break;
-
-  case 8:
-
-/* Line 1455 of yacc.c  */
-#line 298 "sintactico.y"
-    {printf("Encontrado TKN_CNJ"); guardarCadena((yyvsp[(1) - (1)].cnj)); ;}
+#line 308 "sintactico.y"
+    {printf("Encontrado TKN_CNJ %s \n",(yyvsp[(2) - (2)].cadena));;}
     break;
 
 
 
 /* Line 1455 of yacc.c  */
-#line 1639 "sintactico.tab.c"
+#line 1635 "sintactico.tab.c"
       default: break;
     }
   YY_SYMBOL_PRINT ("-> $$ =", yyr1[yyn], &yyval, &yyloc);
@@ -1847,7 +1843,7 @@ yyreturn:
 
 
 /* Line 1675 of yacc.c  */
-#line 301 "sintactico.y"
+#line 333 "sintactico.y"
 
 
 int main(int arg,char **argv){
@@ -1855,7 +1851,7 @@ int main(int arg,char **argv){
     if (arg>1)
     {
         yyin=fopen(argv[1],"rt");
-        printf("Entro al primer arg");
+        printf("Entro al primer arg \n");
     }
     else
         yyin=stdin;
